@@ -10,9 +10,6 @@ const port = process.env.PORT || 5000
 app.use(cors());
 app.use(express.json());
 
-//B9A10-Assignment
-//bSJWRAxbpwj233qm
-
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.fht8xxk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 console.log(uri);
