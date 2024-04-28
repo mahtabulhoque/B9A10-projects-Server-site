@@ -30,6 +30,7 @@ async function run() {
 
 
     const craftCollection = client.db('addCraftItemDB').collection('addCraftItem');
+    const userCollection = client.db('addCraftItemDB').collection('user')
 
     app.get('/addCraftItem', async(req,res) =>{
       const cursor = craftCollection.find();
@@ -76,6 +77,14 @@ async function run() {
           });
       }
 
+  })
+
+
+  app.post('/user', async(req, res)=>{
+    const user = req.body;
+    console.log(user);
+    const result = await userCollection.insertOne(user);
+    res.send(result);
   })
 
 
