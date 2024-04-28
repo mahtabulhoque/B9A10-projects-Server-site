@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000
 
@@ -29,10 +29,10 @@ async function run() {
     await client.connect();
 
 
-    const newCollection = client.db('addCraftItemDB').collection('addCraftItem');
+    const craftCollection = client.db('addCraftItemDB').collection('addCraftItem');
 
     app.get('/addCraftItem', async(req,res) =>{
-      const cursor = newCollection.find();
+      const cursor = craftCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     })
@@ -41,10 +41,43 @@ async function run() {
     app.post('/addCraftItem', async(req,res)=>{
       const newItem = req.body;
       console.log(newItem);
-      const result = await newCollection.insertOne(newItem);
+      const result = await craftCollection.insertOne(newItem);
       res.send(result)
 
     })
+
+
+  //   app.get('/addCraftItem', async(req, res)=>{
+  //     const email = req.query.email
+  //   }
+  // )
+
+
+
+
+    // get single product
+    app.get('/addCraftItem/:id', async (req, res) => {
+      try {
+          const id = req.params.id;
+          const query = { _id: new ObjectId(id) }
+          const itemDetails = await craftCollection.findOne(query);
+          console.log(itemDetails);
+          res.send({
+              success: true,
+              message: "Successfully got the data",
+              data: itemDetails,
+          })
+      }
+      catch (error) {
+          console.log(error.name, error.message);
+          res.send({
+              success: false,
+              error: error.message,
+          });
+      }
+
+  })
+
 
 
 
