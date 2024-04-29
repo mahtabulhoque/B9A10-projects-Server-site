@@ -33,8 +33,17 @@ async function run() {
     const userCollection = client.db('addCraftItemDB').collection('user')
 
     app.get('/addCraftItem', async(req,res) =>{
-      const cursor = craftCollection.find();
+      const cursor = craftCollection.find({});
       const result = await cursor.toArray();
+      res.send(result);
+    })
+
+// update  
+
+    app.get('/addCraftItem/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await craftCollection.findOne(query);
       res.send(result);
     })
     
@@ -43,15 +52,48 @@ async function run() {
       const newItem = req.body;
       console.log(newItem);
       const result = await craftCollection.insertOne(newItem);
-      res.send(result)
+      res.send(result);
 
     })
 
 
-  //   app.get('/addCraftItem', async(req, res)=>{
-  //     const email = req.query.email
-  //   }
-  // )
+app.delete('/addCraftItem/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const query = { _id: new ObjectId(id) };
+    const result = await craftCollection.deleteOne(query);
+    if (result.deletedCount > 0) {
+      res.status(200).json({ success: true, message: "Item deleted successfully" });
+    } else {
+      res.status(404).json({ success: false, message: "Item not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+
+
+    
+
+
+
+
+// get craft items by email
+ app.get('/craft-by-email', async(req, res)=>{
+try {
+  const userEmail = req.query.user_email; 
+  // console.log(userEmail);
+  const query = { user_email: userEmail }; 
+  const craftItemsByEmail = await craftCollection.find(query).toArray();
+  res.json(craftItemsByEmail)
+} catch (error) {
+  console.error('Error fetching dta', error);
+  res.status(500).json({error: 'Internal server error'});
+}
+ }
+ )
 
 
 
